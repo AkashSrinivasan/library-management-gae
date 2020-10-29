@@ -36,6 +36,7 @@ public class Login extends HttpServlet {
 		if(userType.equals("Student")) {
 			Student student = ofy().load().type(Student.class).id(id).now();
 			System.out.println(student.getName());
+			System.out.println(student);
 			if(student!=null && student.getPassword().equals(password)) {
 				getServletContext().setAttribute("user", student);
 				HttpSession httpSession = request.getSession();

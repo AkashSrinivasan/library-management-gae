@@ -13,7 +13,7 @@ import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 
 
-@WebServlet("/signin")
+@WebServlet("/signup")
 public class Signin extends HttpServlet {
 	private static final long serialVersionUID = 1L;
     
@@ -63,8 +63,8 @@ public class Signin extends HttpServlet {
 				+ "        padding: 25px; \r\n"
 				+ "    } \r\n"
 				+ "</style> \r\n");
-		response.getWriter().print("<center><h1>Signin Form</h1></center>\r\n"
-				+ "<form action=\"signin\" method=\"POST\">\r\n"
+		response.getWriter().print("<center><h1>Signup Form</h1></center>\r\n"
+				+ "<form action=\"signup\" method=\"POST\">\r\n"
 				+ "        <div class=\"container\"> \r\n"
 				+ "            <label>Id : </label> \r\n"
 				+ "            <input type=\"text\" placeholder=\"Enter Id\" name=\"id\" required><br>\r\n"
@@ -77,7 +77,7 @@ public class Signin extends HttpServlet {
 				+ "			    <option value=\"Student\">Student</option>\r\n"
 				+ "			    <option value=\"Staff\">Staff</option>\r\n"
 				+ "			 	</select><br>\r\n"
-				+ "            <button type=\"submit\">Signin</button><br> \r\n"
+				+ "            <button type=\"submit\">Signup</button><br> \r\n"
 				+"				Already have account ? <a href=\"index.html\">login</a>"
 				+ "        </div> \r\n"
 				+ "    </form><br>"
