@@ -25,23 +25,17 @@ public class Login extends HttpServlet {
 
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-//		response.getWriter().append("Served at: ").append(request.getContextPath());
 		int id = Integer.parseInt(request.getParameter("id"));
 		String password = request.getParameter("password");
 		String userType = request.getParameter("user");
-		Cookie cookie = new Cookie("userType", request.getParameter("user"));
-		
-//		Student student = ofy().load().type(Student.class).id(id).now();
-		
+		Cookie cookie = new Cookie("userType", request.getParameter("user"));		
 		if(userType.equals("Student")) {
 			Student student = ofy().load().type(Student.class).id(id).now();
-			System.out.println(student.getName());
 			System.out.println(student);
 			if(student!=null && student.getPassword().equals(password)) {
 				getServletContext().setAttribute("user", student);
 				HttpSession httpSession = request.getSession();
 				httpSession.setAttribute("userId", request.getParameter("id"));
-//				System.out.println(httpSession.getAttribute("id"));
 				response.addCookie(cookie);
 				response.sendRedirect("home");
 			}else {
