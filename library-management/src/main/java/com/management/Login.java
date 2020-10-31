@@ -3,6 +3,7 @@ package com.management;
 import static com.googlecode.objectify.ObjectifyService.ofy;
 
 import java.io.IOException;
+import java.util.IllformedLocaleException;
 
 import javax.mail.SendFailedException;
 import javax.servlet.ServletException;
@@ -17,7 +18,7 @@ import javax.servlet.http.HttpSession;
 @WebServlet("/login")
 public class Login extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
+	static int id;
    
     public Login() {
         super();
@@ -25,13 +26,25 @@ public class Login extends HttpServlet {
 
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		int id = Integer.parseInt(request.getParameter("id"));
+		try {
+			id = Integer.parseInt(request.getParameter("id"));
+		}catch(NumberFormatException numberFormatExc) {
+			response.getWriter().print("<p align=\"center\" style=\"color:red;\">Please, enter your id correctly.!</p>"); 
+			request.getRequestDispatcher("index.html").forward(request, response);
+		}
+		
 		String password = request.getParameter("password");
 		String userType = request.getParameter("user");
 		Cookie cookie = new Cookie("userType", request.getParameter("user"));		
 		if(userType.equals("Student")) {
-			Student student = ofy().load().type(Student.class).id(id).now();
-			System.out.println(student);
+			Student student =null;
+			try {
+				 student = ofy().load().type(Student.class).id(id).now();
+			}catch(IllegalArgumentException illligalArg){
+				response.getWriter().print("<p align=\"center\" style=\"color:red;\">It's not valid id</p>"); 
+				request.getRequestDispatcher("index.html").forward(request, response);
+			}
+			
 			if(student!=null && student.getPassword().equals(password)) {
 				getServletContext().setAttribute("user", student);
 				HttpSession httpSession = request.getSession();
@@ -39,7 +52,8 @@ public class Login extends HttpServlet {
 				response.addCookie(cookie);
 				response.sendRedirect("home");
 			}else {
-				response.sendRedirect("index.html");
+				response.getWriter().print("<p align=\"center\" style=\"color:red;\">The id or password that you've entered doesn't match any account please, <a href=\"signinup\">signinup</a></p>"); 
+				request.getRequestDispatcher("index.html").forward(request, response);
 			}
 		}else if(userType.equals("Staff")) {
 			User user = ofy().load().type(Staff.class).id(id).now();
@@ -50,7 +64,8 @@ public class Login extends HttpServlet {
 				response.addCookie(cookie);
 				response.sendRedirect("home");
 			}else {
-				response.sendRedirect("index.html");
+				response.getWriter().print("<p align=\"center\" style=\"color:red;\">The id or password that you've entered doesn't match any account please, <a href=\\\"signinup\\\">signinup</a></p>"); 
+				request.getRequestDispatcher("index.html").forward(request, response);
 			}
 		}else {
 			if(Admin.id == id && Admin.password.equals("root")) {
@@ -60,9 +75,9 @@ public class Login extends HttpServlet {
 				response.sendRedirect("adminHome");
 				
 			}else {
-				response.sendRedirect("index.html");
-			}
-			
+				response.getWriter().print("<p align=\"center\" style=\"color:red;\">The id or password that you've entered doesn't match any account please, <a href=\\\"signinup\\\">signinup</a></p>"); 
+				request.getRequestDispatcher("index.html").forward(request, response);
+			}	
 		}
 	}
 
