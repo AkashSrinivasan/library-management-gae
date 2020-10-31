@@ -22,7 +22,6 @@ public class Signin extends HttpServlet {
     }
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-//		response.getWriter().append("Served at: ").append(request.getContextPath());
 		response.setContentType("text/html");
 		response.getWriter().print("<style> \r\n"
 				+ "Body {\r\n"
@@ -67,7 +66,7 @@ public class Signin extends HttpServlet {
 				+ "<form action=\"signup\" method=\"POST\">\r\n"
 				+ "        <div class=\"container\"> \r\n"
 				+ "            <label>Id : </label> \r\n"
-				+ "            <input type=\"text\" placeholder=\"Enter Id\" name=\"id\" required><br>\r\n"
+				+ "            <input type=\"number\" placeholder=\"Enter Id\" name=\"id\" required><br>\r\n"
 				+ "            <label>Username : </label> \r\n"
 				+ "            <input type=\"text\" placeholder=\"Enter Username\" name=\"username\" required><br>\r\n"
 				+ "            <label>Password : </label> \r\n"
@@ -85,11 +84,6 @@ public class Signin extends HttpServlet {
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-//		if(request.getSession().getAttribute("userName") == null ) {
-//			response.sendRedirect("index.html");
-//		}
-//		response.setHeader("Cache-Control","no-cache, no-store, must-revalidate" );
-		
 		int id = Integer.parseInt(request.getParameter("id"));
 		String name = request.getParameter("username");
 		String password = request.getParameter("password");
@@ -102,9 +96,7 @@ public class Signin extends HttpServlet {
 		}else {
 			 user = ofy().load().type(Staff.class).id(id).now();
 		}
-//		ofy().load().type("Student".getClass()).id(id)
-		
-//		User user = ofy().load().type(userType.getClass()).id(id).now();
+
 		if(user == null && userType.equals("Student")) {
 			ofy().save().entity(new Student(id, name, password)).now();
 			response.getWriter().print("<div align=\"center\">"
