@@ -40,6 +40,11 @@ public class DisplayBook extends HttpServlet {
 		}
 		response.setHeader("Cache-Control","no-cache, no-store, must-revalidate" );
 		User user = (User) getServletContext().getAttribute("user");
+		response.getWriter().print("<style>"
+				+ "table, th, td {\r\n"
+				+ "  border: 1px solid black;\r\n"
+				+ "}"
+				+ "</style>");
 		List<Book> books = ofy().load().type(Book.class).list();
 		
 		int barrowedBookCount = 0;
@@ -51,13 +56,20 @@ public class DisplayBook extends HttpServlet {
 		if(books != null && barrowedBookCount>0) {
 			String bookAsString = books.size() >1 ? "books":"book";
 			response.getWriter().print("<p>You have borrowed "+books.size()+" "+ bookAsString+"</p>");
+			response.getWriter().print("<table>\r\n"
+					+ "			  <tr>\r\n"
+					+ "			    <th>Name</th>\r\n"
+					+ "			    <th>Valid till</th>\r\n"
+					+ "				<th>no of days</th>\r\n"
+					+ "			  </tr>");
 			books.forEach(book -> {
 				try {
 					if(book.barrowerId == user.getId()) {
-						response.getWriter().print("<p>Book Name = "+book.name+"</p>");
-						response.getWriter().print("<p>Return the book before "+ book.getBorrowedOn().toLocalDate()+"</p>" );
-						response.getWriter().print("<p>Valid only for "+ ChronoUnit.DAYS.between(LocalDateTime.now(), book.getDueDate())+" days</p>");
-						response.getWriter().print("</br>");
+						response.getWriter().print("<tr>");
+						response.getWriter().print("<td>"+book.name+"</td>");
+						response.getWriter().print("<td>"+ book.getBorrowedOn().toLocalDate()+"</td>" );
+						response.getWriter().print("<td>"+ ChronoUnit.DAYS.between(LocalDateTime.now(), book.getDueDate())+"</td>");
+						response.getWriter().print("</tr>");
 					}
 					
 				} catch (IOException e) {
@@ -65,6 +77,7 @@ public class DisplayBook extends HttpServlet {
 				}
 				
 			});
+			response.getWriter().print("</table>");
 		}else {
 			response.getWriter().println("<h1>No books to display..!</h1>");
 		}

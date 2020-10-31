@@ -38,25 +38,42 @@ public class ReturnBook extends HttpServlet {
 		}
 		response.setHeader("Cache-Control","no-cache, no-store, must-revalidate" );
 		response.setContentType("text/html");
+		response.getWriter().print("<style>"
+				+ "table, th, td {\r\n"
+				+ "  border: 1px solid black;\r\n"
+				+ "}"
+				+ "</style>");
 		User user = (User) getServletContext().getAttribute("user");
 		List<Book> books = ofy().load().type(Book.class).list();
 		int barrowedBookCount = 0;
 		for(Book book:books) {
-			if(book.barrowerId == user.getId()) {
-				barrowedBookCount++;
+			try {
+				if(book.barrowerId == user.getId()) {
+					barrowedBookCount++;
+				}
+			}catch(NullPointerException nullPointerExc){
+				response.sendRedirect("index.html");
 			}
+			
 		}
 		if(books != null && barrowedBookCount>0 ) {
+			response.getWriter().print("<p> Your book list</p>");
+			response.getWriter().print("<table>\r\n"
+					+ "			  <tr>\r\n"
+					+ "			    <th>Id</th>\r\n"
+					+ "			    <th>Valid till</th>\r\n"
+					+ "			  </tr>");
 			books.forEach(i -> {
 				try {
 					if(i.barrowerId == user.getId()) {
-					response.getWriter().print("<p>Book Id = "+i.id+" || ");
-					response.getWriter().println("Valid till = "+ ChronoUnit.DAYS.between(LocalDateTime.now(), i.getDueDate())+"</p>");
+						response.getWriter().print("<tr><td>"+i.id+"</td>");
+						response.getWriter().println("<td>"+ ChronoUnit.DAYS.between(LocalDateTime.now(), i.getDueDate())+"</td></tr>");
 					}
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			});
+			response.getWriter().print("</table>");
 			
 			response.getWriter().print("<form action=\"returnBook\" method=\"POST\">"
 					+ "Enter the book id :<input type=\"text\" placeholder=\"Enter book Id\" name=\"bookid\" required>"

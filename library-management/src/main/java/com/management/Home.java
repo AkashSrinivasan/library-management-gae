@@ -26,6 +26,7 @@ public class Home extends HttpServlet {
 		}
 		response.setHeader("Cache-Control","no-cache, no-store, must-revalidate" );
 			User user = (User) getServletContext().getAttribute("user");
+			try {
 			response.getWriter().print("<h1>Hi "+user.getName()+".!</h1><br>"
 					+ "					<a href=\"displayBook\">Display borrowed book</a><br>"
 					+ "					<a href=\"barrowBook\">Get Book from Library</a><br>"
@@ -33,6 +34,9 @@ public class Home extends HttpServlet {
 			response.getWriter().print("<form action =\"logout\" method = \"POST\">\r\n"
 					+ "         <input type = \"submit\" value = \"Logout\" />\r\n"
 					+ "      </form> ");
+			}catch(NullPointerException nullPointerExp) {
+				response.sendRedirect("index.html");
+			}
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
